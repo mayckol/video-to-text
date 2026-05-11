@@ -3,6 +3,7 @@ package summarize
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"strings"
 
 	openai "github.com/sashabaranov/go-openai"
@@ -10,7 +11,7 @@ import (
 
 const (
 	DefaultModel = openai.GPT4oMini
-	maxTokens    = 4096
+	maxTokens    = 8192
 )
 
 type Client struct {
@@ -39,7 +40,18 @@ func (c *Client) Summarize(ctx context.Context, prompt string) (string, error) {
 	if len(resp.Choices) == 0 {
 		return "", fmt.Errorf("openai returned no choices")
 	}
-	out := strings.TrimSpace(resp.Choices[0].Message.Content)
+	choice := resp.Choices[0]
+	slog.Info("openai chat response",
+		"model", c.model,
+		"finish_reason", choice.FinishReason,
+		"prompt_tokens", resp.Usage.PromptTokens,
+		"completion_tokens", resp.Usage.CompletionTokens,
+		"total_tokens", resp.Usage.TotalTokens,
+	)
+	if choice.FinishReason == openai.FinishReasonLength {
+		slog.Warn("summary may be truncated; consider raising max_tokens or using --summary-model gpt-4o")
+	}
+	out := strings.TrimSpace(choice.Message.Content)
 	if out == "" {
 		return "", fmt.Errorf("openai returned empty content")
 	}

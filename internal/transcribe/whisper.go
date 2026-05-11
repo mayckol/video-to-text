@@ -3,6 +3,7 @@ package transcribe
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"sync"
 
 	openai "github.com/sashabaranov/go-openai"
@@ -42,6 +43,16 @@ func (c *Client) Transcribe(ctx context.Context, ch Chunk) (Transcribed, error) 
 			StartSec: w.Start + offset,
 			EndSec:   w.End + offset,
 		})
+	}
+	slog.Info("whisper chunk transcribed",
+		"start_sec", ch.StartSec,
+		"end_sec", ch.EndSec,
+		"detected_lang", resp.Language,
+		"words", len(words),
+		"text_chars", len(resp.Text),
+	)
+	if len(words) == 0 {
+		slog.Warn("whisper returned zero words for chunk", "start_sec", ch.StartSec)
 	}
 	return Transcribed{Chunk: ch, Words: words}, nil
 }
