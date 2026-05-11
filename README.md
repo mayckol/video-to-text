@@ -18,7 +18,14 @@ go build -o summarize ./cmd/summarize
 
 ## Usage
 
-### Transcript only (default)
+The behavior is controlled by the **`--summarize` flag**, not by the file extension of `--out`. The `.txt` / `.md` convention below is just that — a convention — but the rule is simple:
+
+- **Without `--summarize`** → only Whisper runs. The stitched plain-text transcript is written to `--out`. No chat call. No summary tokens. Use `.txt`.
+- **With `--summarize`** → Whisper runs, then the OpenAI chat model is called to produce a Markdown summary. The summary is written to `--out`. Use `.md`. The raw transcript can be saved alongside via `--keep-transcript`.
+
+> Note: the tool writes the bytes it produces to whatever path you pass; it does not validate or enforce the extension. Writing a transcript to `out.md` works, but the file will be plain text, not Markdown.
+
+### Transcript only — write `.txt` (default, no summary)
 
 ```bash
 export OPENAI_API_KEY=...
@@ -28,9 +35,9 @@ export OPENAI_API_KEY=...
   --out ./transcript.txt
 ```
 
-Writes the stitched transcript directly to `--out`. Only Whisper is called.
+Only Whisper is called. No chat model, no summary token spend. Output is the stitched plain transcript.
 
-### Transcript + Markdown summary
+### Transcript + Markdown summary — write `.md`
 
 ```bash
 ./summarize \
@@ -45,7 +52,15 @@ Writes the stitched transcript directly to `--out`. Only Whisper is called.
   [--summary-model gpt-4o-mini]
 ```
 
-With `--summarize`, the chat model is called and the Markdown summary is written to `--out`. The raw transcript can be saved alongside via `--keep-transcript`.
+Whisper transcribes, then the chat model renders the kind-specific Markdown summary to `--out`. Pass `--keep-transcript` to also save the raw transcript on the side.
+
+### Quick reference
+
+| You want | Flag | Suggested `--out` | OpenAI calls |
+|---|---|---|---|
+| Plain transcript | (omit `--summarize`) | `transcript.txt` | Whisper only |
+| Markdown summary | `--summarize` | `summary.md` | Whisper + chat |
+| Both | `--summarize --keep-transcript transcript.txt` | `summary.md` | Whisper + chat |
 
 ### Flags
 
