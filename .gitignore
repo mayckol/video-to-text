@@ -1,0 +1,37 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Binaries
+/summarize
+
+# Generated outputs (transcripts/summaries are user data, not source)
+*.txt
+*.md
+!README.md
+
+# Media (do not commit large recordings)
+*.mp4
+*.m4v
+*.mkv
+*.mov
+*.webm
+*.avi
+*.flv
+*.wmv
+*.ts
+*.mpg
+*.mp3
+*.m4a
+*.aac
+*.wav
+*.flac
+*.ogg
+*.opus
+*.wma
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
