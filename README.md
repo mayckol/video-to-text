@@ -8,7 +8,7 @@ Go CLI that turns a meeting recording (video or audio) into a transcript or a st
 
 - Go 1.22+
 - `ffmpeg` and `ffprobe` on `PATH`
-- `OPENAI_API_KEY` env var
+- `OPENAI_API_KEY` env var (or a `.env` file in the working directory containing `OPENAI_API_KEY=...` — auto-loaded at startup; real env vars take precedence)
 
 ## Install
 

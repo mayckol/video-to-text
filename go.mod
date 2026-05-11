@@ -3,6 +3,7 @@ module github.com/mayckol/meeting-summarizer
 go 1.26.3
 
 require (
+	github.com/joho/godotenv v1.5.1
 	github.com/sashabaranov/go-openai v1.41.2
 	github.com/spf13/cobra v1.10.2
 )

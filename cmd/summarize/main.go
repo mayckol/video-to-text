@@ -10,6 +10,7 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/joho/godotenv"
 	"github.com/mayckol/meeting-summarizer/internal/pipeline"
 	"github.com/mayckol/meeting-summarizer/internal/summarize"
 	"github.com/spf13/cobra"
@@ -57,6 +58,8 @@ type flags struct {
 
 func main() {
 	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stderr, nil)))
+	// Load .env from CWD if present. Real environment variables win over file values.
+	_ = godotenv.Load()
 	var f flags
 
 	root := &cobra.Command{
